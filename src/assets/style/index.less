@@ -1,0 +1,61 @@
+*{
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-size: 16px;
+}
+
+// var
+@gird: #81c784;
+@grid_hover: #a5d6a7;
+@grid_active: #4dd0e1;
+@grid_match: #00bcd4;
+
+// 业务
+.game {
+  display: table;
+  margin: 50px auto 0;
+
+  .board {
+    position: relative;
+    border: 1px solid #000;
+    overflow: hidden;
+    &.non-click {
+      pointer-events: none;
+    }
+
+    .grid {
+      position: absolute;
+      // width: 48px;
+      // height: 48px;
+      background-color: @gird;
+      // border: 5px solid #fff;
+      background-repeat: no-repeat;
+      background-size: contain;
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all .5s;
+      // transition: all 1.5s;
+
+      &:hover {
+        background-color: @grid_hover;
+      }
+
+      &.active {
+        background-color: @grid_active;
+      }
+
+      &.non-transition {
+        transition: all 0s;
+      }
+
+      &.match {
+        background-color: @grid_match;
+      }
+    }
+  }
+}
