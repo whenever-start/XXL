@@ -76,7 +76,7 @@ module.exports = {
         ]
       },
       {
-        test: /\.(png|jpe?g|gif|svg|ico)/i,
+        test: /\.(png|jpe?g|gif|svg|ico|mp3)/i,
         type: 'asset',
         generator: {
           // 图片局部目录

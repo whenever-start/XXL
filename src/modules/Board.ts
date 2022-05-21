@@ -4,6 +4,7 @@ import flatten from '../utils/flatten'
 import isInRange from '../utils/isInRange'
 import Grid from './Grid'
 import Panel from './Panel'
+import Sound from './Sound'
 
 // 参照 .grid 中设置的 transition time
 const delay = 400
@@ -11,6 +12,7 @@ const delay = 400
 class Board {
   element: HTMLElement = document.querySelector('.game .board')!
   private panel: Panel = new Panel()
+  private sound: Sound = new Sound()
   private grids: Grid[][] = []
   private gridsElt: HTMLElement[] = []
 
@@ -19,6 +21,7 @@ class Board {
 
   // 被激活的 grid（第一次点击）
   private active: Grid | null = null
+  private eliminateTime: number = 0
 
   constructor() {
     this.initDom()
@@ -100,6 +103,7 @@ class Board {
     let y = Number(gridElt.dataset.y)
     const grid = this.grids[x][y]
 
+    this.sound.click()
     // 还未激活任何 grid
     if (!this.active) {
       this.active = grid
@@ -168,6 +172,8 @@ class Board {
 
   // 交换两个 grid 位置，包括 grids 数组中的位置
   private swap(a: [number, number], b: [number, number]) {
+    this.sound.swap()
+
     let [ax, ay] = a
     let [bx, by] = b
 
@@ -287,6 +293,9 @@ class Board {
 
     this.eliminateActive(match)
 
+    this.eliminateTime++
+    this.sound.eliminate(this.eliminateTime)
+
     // 单次消除步骤
     setTimeout(() => {
       for (let x in match) {
@@ -336,6 +345,8 @@ class Board {
         allDrops.push(...dropGrids)
       }
 
+      this.sound.drop()
+
       // 计分
       this.setScore(matches)
     }, delay)
@@ -357,6 +368,7 @@ class Board {
       } else {
         // 最终匹配结束，恢复可点击
         this.reClick()
+        this.eliminateTime = 0
       }
     }, delay + 500)
   }
@@ -418,6 +430,11 @@ class Board {
       }
     })
 
+    let matchCount = merge.reduce((acc, gridMatch) => {
+      return acc + this.getMatchLength(gridMatch)
+    }, 0)
+    this.sound.match(matchCount)
+
     return merge
   }
 
@@ -433,6 +450,11 @@ class Board {
     })
 
     this.panel.increase(score)
+  }
+
+  // 获取 match len
+  getMatchLength(match: GridMatch) {
+    return Object.values(match).reduce((acc, yArray) => acc + yArray.length, 0)
   }
 
   // 暂停 grid 的 transition
